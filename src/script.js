@@ -1,6 +1,5 @@
-
-
 import { PixabayAPI } from './PixabayAPI.js';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const searchForm = document.querySelector('.search-form');
 const photosGallery = document.querySelector('.gallery');
@@ -18,19 +17,21 @@ const onSearchFormSubmit = async event => {
     try {
     const { data } = await pixabayAPI.searchPhotos();
         if (!data.hits.length) {
-            alert('oops!')
+            Notify.failure('Sorry, there are no images matching your search query. Please try again.');
             event.target.reset();
             photosGallery.innerHTML = '';
             loadMoreBtn.classList.add('is-hidden');
             return;
-        } else if ((data.hits.length * pixabayAPI.page) < 40) {
-        //alert("We're sorry, but you've reached the end of search results");
+        } else if (data.hits.length < 40) {
         renderPhotos(data.hits);
+        Notify.info("We're sorry, but you've reached the end of search results");
+        
         console.log(data.hits.length);
             console.log(data.totalHits);
             console.log(data.hits.length * pixabayAPI.page);
         }  else { 
         renderPhotos(data.hits);
+        Notify.info(`Hooray! We found ${data.totalHits} images`)
         console.log(data);
             loadMoreBtn.classList.remove('is-hidden');
         
@@ -45,18 +46,18 @@ const onLoadBtnClick = async event => {
 
   try {  
     const { data } = await pixabayAPI.searchPhotos();
-        if ((data.hits.length * pixabayAPI.page) <= 40) {
-            //alert("We're sorry, but you've reached the end of search results");
+        if (data.hits.length < 40 || pixabayAPI.page === 13) {
+          Notify.info("We're sorry, but you've reached the end of search results");
             renderPhotos(data.hits);
             console.log(data.hits.length);
-                console.log(data.totalHits);
+                console.log(pixabayAPI.page);
                 loadMoreBtn.classList.add('is-hidden');
-            } 
+            } else {
     renderPhotos(data.hits);
+    Notify.info(`Hooray! We found ${data.totalHits} images`)
     console.log(data.hits.length);
-    console.log(data.totalHits);
-    console.log(data.hits.length * pixabayAPI.page);
-    
+    console.log(pixabayAPI.page);
+    }
 } catch(error) {
     console.log(error);
 } 
