@@ -15,7 +15,7 @@ const onSearchFormSubmit = event => {
     pixabayAPI.query = event.currentTarget.searchQuery.value;
     pixabayAPI.page = 1;
 
-    pixabayAPI.searchPhotos().then(data => {
+    pixabayAPI.searchPhotos().then(({ data }) => {
         if (!data.hits.length) {
             alert('oops!')
             event.target.reset();
@@ -42,7 +42,7 @@ const onSearchFormSubmit = event => {
 const onLoadBtnClick = event => {
     pixabayAPI.page += 1;
 
-    pixabayAPI.searchPhotos().then(data => {
+    pixabayAPI.searchPhotos().then(({data}) => {
         if ((data.hits.length * pixabayAPI.page) <= 40) {
             //alert("We're sorry, but you've reached the end of search results");
             renderPhotos(data.hits);
