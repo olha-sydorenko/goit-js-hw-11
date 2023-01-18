@@ -9,13 +9,14 @@ const loadMoreBtn = document.querySelector('.load-more');
 const pixabayAPI = new PixabayAPI();
 
 
-const onSearchFormSubmit = event => {
+const onSearchFormSubmit = async event => {
     event.preventDefault();
     
     pixabayAPI.query = event.currentTarget.searchQuery.value;
     pixabayAPI.page = 1;
 
-    pixabayAPI.searchPhotos().then(({ data }) => {
+    try {
+    const { data } = await pixabayAPI.searchPhotos();
         if (!data.hits.length) {
             alert('oops!')
             event.target.reset();
@@ -34,15 +35,16 @@ const onSearchFormSubmit = event => {
             loadMoreBtn.classList.remove('is-hidden');
         
     }   
-    }).catch(error => {
+    } catch(error) {
         console.log(error);
-    }) 
+    }
 }
 
-const onLoadBtnClick = event => {
+const onLoadBtnClick = async event => {
     pixabayAPI.page += 1;
 
-    pixabayAPI.searchPhotos().then(({data}) => {
+  try {  
+    const { data } = await pixabayAPI.searchPhotos();
         if ((data.hits.length * pixabayAPI.page) <= 40) {
             //alert("We're sorry, but you've reached the end of search results");
             renderPhotos(data.hits);
@@ -55,9 +57,9 @@ const onLoadBtnClick = event => {
     console.log(data.totalHits);
     console.log(data.hits.length * pixabayAPI.page);
     
-}).catch(error => {
+} catch(error) {
     console.log(error);
-}) 
+} 
 }
 
 
