@@ -13,6 +13,7 @@ const onSearchFormSubmit = async event => {
     
     pixabayAPI.query = event.currentTarget.searchQuery.value;
     pixabayAPI.page = 1;
+    photosGallery.innerHTML = '';
 
     try {
     const { data } = await pixabayAPI.searchPhotos();
@@ -26,13 +27,9 @@ const onSearchFormSubmit = async event => {
         renderPhotos(data.hits);
         Notify.info("We're sorry, but you've reached the end of search results");
         
-        console.log(data.hits.length);
-            console.log(data.totalHits);
-            console.log(data.hits.length * pixabayAPI.page);
         }  else { 
         renderPhotos(data.hits);
         Notify.info(`Hooray! We found ${data.totalHits} images`)
-        console.log(data);
             loadMoreBtn.classList.remove('is-hidden');
         
     }   
@@ -49,14 +46,10 @@ const onLoadBtnClick = async event => {
         if (data.hits.length < 40 || pixabayAPI.page === 13) {
           Notify.info("We're sorry, but you've reached the end of search results");
             renderPhotos(data.hits);
-            console.log(data.hits.length);
-                console.log(pixabayAPI.page);
-                loadMoreBtn.classList.add('is-hidden');
+            loadMoreBtn.classList.add('is-hidden');
             } else {
     renderPhotos(data.hits);
     Notify.info(`Hooray! We found ${data.totalHits} images`)
-    console.log(data.hits.length);
-    console.log(pixabayAPI.page);
     }
 } catch(error) {
     console.log(error);
